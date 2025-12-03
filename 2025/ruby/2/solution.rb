@@ -8,8 +8,12 @@ invalid_long_ids = []
 ids.each do |start, finish|
   start.upto(finish) do |id|
     id = id.to_s
-    if id == (id[0] * 2)
-      invalid_ids << id.to_i 
+    if (
+      id == (id[0] * 2) || 
+      id == id[0] * id.length
+    ) && id != id[0]
+      puts "#{id[0]} from #{id} (#{start}-#{finish})"
+      invalid_long_ids << id.to_i 
       next
     end
 
@@ -19,13 +23,13 @@ ids.each do |start, finish|
       next if id == pattern
 
       if id == pattern * 2
-        puts "#{pattern} from #{id} (#{start}-#{finish})"
         invalid_ids << id.to_i 
-        to_break = true
       end
-
+      
       if id == (pattern * (id.length / pattern.length))
+        puts "#{pattern} from #{id} (#{start}-#{finish})"
         invalid_long_ids << id.to_i
+        to_break = true
       end
 
       break if to_break
@@ -33,4 +37,4 @@ ids.each do |start, finish|
   end
 end
 
-puts '---', invalid_ids.sum
+puts '---', invalid_long_ids.sum
