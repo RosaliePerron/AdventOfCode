@@ -1,16 +1,25 @@
 class Warehouse
-  attr_accessor :rolls, :valid_rolls
+  attr_accessor :removed
 
   def initialize
     @valid_rolls = []
+    @to_remove = []
+    @removed = []
     get_grid
+    
     get_rolls
+    
+    while @to_remove.length > 0
+      puts "rolls to remove: #{@to_remove.length}"
+      remove_rolls
+      get_rolls
+    end
   end
 
   private
 
   def get_grid
-    file = File.open('input.example')
+    file = File.open('input')
     @grid = file.readlines.map{ |line| line.chars }
   end
 
@@ -29,19 +38,14 @@ class Warehouse
 
   def check_if_valid(x, y)
     nb_rolls = 0
-    puts "coords: #{x}, #{y}"
-    puts "to check: #{get_coords_to_check(x, y)}"
     get_coords_to_check(x, y).each do |coords|
-      x = coords[0]
-      y = coords[1]
-      if @grid[y][x] == '@'
-        puts "neighbour: #{x}, #{y}"
+      if @grid[coords[1]][coords[0]] == '@'
         nb_rolls += 1
       end
     end
     
     if nb_rolls < 4
-      @valid_rolls << [x, y]
+      @to_remove << [x, y]
     end
   end
 
@@ -68,7 +72,16 @@ class Warehouse
     return 0 if curr == 2
     return 1 if curr == 3
   end
+
+  def remove_rolls
+    @to_remove.each do |roll|
+      puts "#{roll}"
+      @grid[roll[1]][roll[0]] = '.'
+      @removed << roll
+    end
+    @to_remove = []
+  end
 end 
 
 warehouse = Warehouse.new
-puts '---', warehouse.valid_rolls.count
+puts '---', warehouse.removed.count
