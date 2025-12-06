@@ -1,30 +1,43 @@
-file = File.open('input')
-banks = file.readlines
-
-banks = banks.map { |batteries| batteries.each_char.map(&:to_i) }
-joltage = 0
-
-banks.each do |bank|
-  bests = {}
-
-  decimal = 0
-  decimal_i = 0
-  bank[0..-3].each_with_index do |battery, i|
-    if battery > decimal
-      decimal = battery 
-      decimal_i = i
-    end
-  end
-  
-  units = 0
-  bank[decimal_i+1..-1].each do |battery|
-    if battery > units 
-      units = battery 
-    end
-  end
-
-  puts "#{decimal}#{units}".to_i
-  joltage += "#{decimal}#{units}".to_i
+def get_banks
+  file = File.open('input.example')
+  banks = file.readlines
+  banks.map { |batteries| batteries.each_char.map(&:to_i) }
 end
 
-puts '---', joltage
+def part_one
+  joltage = 0
+  banks = get_banks
+
+  banks.each do |bank|
+    number = []
+    number_i = []
+
+    0.upto(1) do |n_i|
+      bank.each_with_index do |battery, i|
+        if number.length == n_i
+          number << battery 
+          number_i << i
+          next
+        end
+
+        if number[n_i] < battery 
+          number[n_i] = battery
+          number_i[n_i] = i
+        end
+      end
+
+      bank.delete(number_i[n_i])
+    end
+
+    puts number
+  end
+
+  joltage
+end
+
+def part_two
+  joltage = 0
+  banks = get_banks
+end
+
+puts '---', part_one
